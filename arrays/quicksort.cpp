@@ -1,60 +1,36 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Using Hoare's partitioning scheme
-int Partition(vector<int> &nums, int low, int high)
+// main function will pick up a pivot element the rightmost one and make the array as the elements left to the pivot wil be lesser and the elements on right eill be greater
+int partition(vector<int> &nums, int start, int end)
 {
-    // Initializing pivot's index to low
-    int pivot_value = nums[low];
-    int i = low;
-    int j = high;
+    int pivot = nums[end];
+    int partitionIdx = start;
 
-    // Loop till i pointer crosses j pointer
-    while (i < j)
+    for (int i = start; i < end; i++)
     {
-        // Increment the 'i' pointer till it finds an element greater than pivot
-        while (i <= high && nums[i] <= pivot_value)
-            i++;
-
-        // Decrement the 'j' pointer till it finds an element less than pivot
-        while (nums[j] > pivot_value)
-            j--;
-
-        // Swap the numbers on 'i' and 'j'
-        if (i < j)
+        if (nums[i] <= pivot) // will make the elements less than or equal on the left
         {
-            // Using the stl swap function to swap the numbers
-            swap(nums[i], nums[j]);
+            swap(nums[partitionIdx], nums[i]);
+            partitionIdx++;
         }
     }
-    // Swap pivot element with element on 'j' pointer.
-    nums[low] = nums[j];
-    nums[j] = pivot_value;
-
-    // Return the pivot index
-    return j;
+    swap(nums[partitionIdx], nums[end]); // finally swap the pivot, and here var pivot is not used because it will contain the old value of nums[end] which may be changed
+    return partitionIdx;
 }
 
-void QuickSortRec(vector<int> &nums, int low, int high)
+void quickSort(vector<int> &nums, int start, int end)
 {
-    if (high > low)
+    if (start < end)
     {
-        // pivot_index is the partitioning index
-        int pivot_index = Partition(nums, low, high);
-
-        // Sort elements before partition
-        QuickSortRec(nums, low, pivot_index - 1);
-
-        // Sort elements after partition
-        QuickSortRec(nums, pivot_index + 1, high);
+        int partitionIdx = partition(nums, start, end);
+        quickSort(nums, start, partitionIdx - 1);
+        quickSort(nums, partitionIdx + 1, end);
     }
 }
 
-void QuickSort(vector<int> &nums, int size)
+vector<int> sortArray(vector<int> &nums)
 {
-    QuickSortRec(nums, 0, nums.size() - 1);
-}
-
-int main()
-{
+    quickSort(nums, 0, nums.size() - 1);
+    return nums;
 }
